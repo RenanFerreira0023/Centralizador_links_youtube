@@ -36,8 +36,6 @@ coverage.xml
 *.sublime-project
 *.sublime-workspace
 
-# PyInstaller files
-*.spec
 
 # Virtual environments
 venv/
