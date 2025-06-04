@@ -14,6 +14,7 @@ from kivy.metrics import dp
 from kivy.uix.spinner import Spinner
 from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
+from kivy.core.clipboard import Clipboard
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
@@ -23,6 +24,7 @@ from kivy.uix.checkbox import CheckBox
 from kivymd.app import MDApp
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
+from kivymd.uix.button import MDIconButton
 
 
 import json
@@ -286,6 +288,21 @@ def filtrar_videos(card_grid, texto):
 class ResponsiveApp(MDApp):
 
 
+
+    def colar_link_youtube(self, input_url_button):
+        conteudo = Clipboard.paste()
+        print(f"Conteúdo da área de transferência: {conteudo}")
+
+        if "youtube.com/watch" in conteudo or "youtube.com/shorts" in conteudo or "youtu.be/" in conteudo:
+            print("✔ É um link do YouTube!")
+            input_url_button.text = conteudo  # Corrigido: altera o texto do botão
+        else:
+            print("❌ Não é um link do YouTube.")
+
+
+    def limpar_input(self,input_url_button):
+        input_url_button.text = 'Clique aqui para colar a URL do vídeo'
+
     def build(self):
         root = BoxLayout(orientation='vertical')
 
@@ -299,6 +316,10 @@ class ResponsiveApp(MDApp):
         self.theme_cls.theme_style = "Dark"  
         self.theme_cls.primary_palette = "Teal" 
         
+
+
+
+
         def save_video(self, url, tempo, categoria, nome, nomeImagem):
             if categoria == 'Selecione uma categoria':
                 categoria = 'Geral'
@@ -339,17 +360,46 @@ class ResponsiveApp(MDApp):
             for card in cards:
                 card_grid.add_widget(card)
 
+
+
+
+
         def show_add_popup(self):
             content = BoxLayout(orientation='vertical', spacing=dp(10), padding=dp(10))
-            input_url = TextInput(hint_text='URL do vídeo', multiline=True  ,size_hint_y=None, height=dp(50),    halign='center' )
-            content.add_widget(input_url)
 
-            save_carregarVideo = Button(text='Carregar vídeo', size_hint_y=None, height=dp(40))
+            # Layout horizontal para input_url + botão limpar
+            row_input = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(50), spacing=dp(5))
+
+            input_url = Button(
+                text='Clique aqui para colar a URL do vídeo',
+                size_hint_x=0.85,
+                halign='center',
+                on_release=lambda x: self.colar_link_youtube(input_url)
+            )
+            row_input.add_widget(input_url)
+
+            # Botão com ícone "broom" (limpar)
+            btn_limpar = MDIconButton(
+                icon='broom',
+                size_hint_x=0.15,
+                on_release=lambda x: self.limpar_input(input_url)
+            )
+            row_input.add_widget(btn_limpar)
+
+            content.add_widget(row_input)
+
+            # Linha horizontal com o botão "Carregar vídeo"
+            save_carregarVideo = Button(
+                text='Carregar vídeo',
+                size_hint_y=None,
+                height=dp(40)
+            )
             content.add_widget(save_carregarVideo)
 
             def carregar_video(url):
-                youtube_regex = re.compile(r'(https?://(?:www\.)?youtube\.com/watch\?v=([a-zA-Z0-9_-]+)|https?://(?:www\.)?youtu\.be/([a-zA-Z0-9_-]+))')
-
+#                youtube_regex = re.compile(r'(https?://(?:www\.)?youtube\.com/watch\?v=([a-zA-Z0-9_-]+)|https?://(?:www\.)?youtu\.be/([a-zA-Z0-9_-]+))')
+                youtube_regex = re.compile(r'(https?://(?:www\.)?youtube\.com/(?:watch\?v=|shorts/)([a-zA-Z0-9_-]+)|https?://(?:www\.)?youtu\.be/([a-zA-Z0-9_-]+))'
+)
                 match = youtube_regex.match(url)
                 if match:
 
@@ -407,10 +457,10 @@ class ResponsiveApp(MDApp):
 
 
         search_input = TextInput(
-            hint_text='Pesquisar vídeos...',
+            hint_text='\nPesquisar vídeos...',
             size_hint=(0.6, 1), 
             multiline=False,
-             halign='center' 
+             halign='center' ,
         )
 
 
