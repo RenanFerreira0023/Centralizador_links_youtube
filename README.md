@@ -14,7 +14,9 @@
 #Como configurar:
 
 #1- Entre neste site: ' https://www.ffmpeg.org/download.html '
+
 #2- Baixe este programa ' ffmpeg-8.0.1-essentials_build '
+
 #3- instale este programa neste diretório : 'C:\ffmpeg\'
 
 `pyinstaller .\MotorDownloadYoutube.spec`
