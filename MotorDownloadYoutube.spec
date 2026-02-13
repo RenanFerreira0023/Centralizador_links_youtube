@@ -6,8 +6,8 @@ a = Analysis(
     ['MotorDownloadYoutube.py'],
     pathex=[],
     binaries=[],
-    datas=[('icone/youtube.ico', 'icone')],  # inclui o ícone na pasta "icone"
-    hiddenimports=['yt_dlp'],                # força incluir yt_dlp
+    datas=[('icone/youtube.ico', 'icone')],  
+    hiddenimports=['yt_dlp', 'yt_dlp.extractor', 'yt_dlp.postprocessor'],  
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
